@@ -19,7 +19,7 @@ except (VideoUnavailable, RegexMatchError):
     sys.exit(1)
 
 #.downloads() return a path of the content saved.
-file_path = yt.streams.get_audio_only().download(output_path=r"C:\Users\raque\Downloads\downloads_python")
+file_path = yt.streams.get_audio_only().download(output_path=r"YOUR_PATH_HERE")
 
 #transcription
 print("Initializing the transcription model...")
@@ -32,7 +32,7 @@ text_to_resume = " ".join([segment.text for segment in segments])
 
 #Resume
 print("Passing to gemini...")
-genai.configure(api_key="AIzaSyBjPsMDfd0lvAjhPKw_7WbAjsX22Vn_-KQ")
+genai.configure(api_key="YOUR_API_KEY_HERE")
 model_gemini = genai.GenerativeModel('gemini-2.5-flash')
 
 prompt = f"""
@@ -53,6 +53,6 @@ response = model_gemini.generate_content(prompt)
 
 #Store the resume like a md file
 file_name = remove_punctuation(yt.title)
-destination = fr"C:\Users\raque\PycharmProjects\PythonProject\resumes\resume_{file_name}.md"
+destination = fr"YOUR_PATH_HERE"
 with open(destination, "w+") as f:
     f.write(response.text)
