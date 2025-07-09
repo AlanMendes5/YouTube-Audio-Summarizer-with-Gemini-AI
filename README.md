@@ -1,6 +1,6 @@
 
 # YouTube Audio Summarizer with Gemini AI
-#### Video Demo:  [<URL HERE>](https://youtu.be/UZkcMZjIE90)
+#### Video Demo:  https://youtu.be/UZkcMZjIE90
 #### Description:
 This Python project allows you to download the audio from any public YouTube video and automatically generate a summarized version of its content using Google's Gemini AI API. The summary is neatly formatted in Markdown, making it ideal for documentation, study materials, or quick reviews of video content such as lectures, podcasts, interviews, and tutorials.
 
