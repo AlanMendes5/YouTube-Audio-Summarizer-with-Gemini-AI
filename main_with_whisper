@@ -1,0 +1,58 @@
+import sys
+import string
+from pytubefix import YouTube
+from pytubefix.cli import on_progress
+from pytubefix.exceptions import VideoUnavailable, RegexMatchError
+from faster_whisper import WhisperModel
+import google.generativeai as genai
+
+def remove_punctuation(text):
+    return text.translate(str.maketrans("", "", string.punctuation))
+
+#Download video from YT
+url = input("Provide a youtube video URL: ")
+
+try:
+    yt = YouTube(url, on_progress_callback=on_progress)
+except (VideoUnavailable, RegexMatchError):
+    print("MOST PROVIDE A VALID URL.")
+    sys.exit(1)
+
+#.downloads() return a path of the content saved.
+file_path = yt.streams.get_audio_only().download(output_path=r"C:\Users\raque\Downloads\downloads_python")
+
+#transcription
+print("Initializing the transcription model...")
+model = WhisperModel("turbo", device="cpu", compute_type="int8")
+
+print("Transcribing video...")
+segments, info = model.transcribe(file_path, beam_size=5)
+
+text_to_resume = " ".join([segment.text for segment in segments])
+
+#Resume
+print("Passing to gemini...")
+genai.configure(api_key="AIzaSyBjPsMDfd0lvAjhPKw_7WbAjsX22Vn_-KQ")
+model_gemini = genai.GenerativeModel('gemini-2.5-flash')
+
+prompt = f"""
+Your task is to create a concise and clear summary of the text provided below.
+
+**Instructions:**
+**Size:** The summary should be short.
+* Focus:** Highlight the key points.
+**Format:** Present the summary in bullet points.
+** Target audience:** Write for a lay audience.
+* BE FUN!
+
+**Summary text:**
+{text_to_resume}
+"""
+
+response = model_gemini.generate_content(prompt)
+
+#Store the resume like a md file
+file_name = remove_punctuation(yt.title)
+destination = fr"C:\Users\raque\PycharmProjects\PythonProject\resumes\resume_{file_name}.md"
+with open(destination, "w+") as f:
+    f.write(response.text)
